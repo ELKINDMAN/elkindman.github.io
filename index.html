@@ -19,6 +19,7 @@
     --tag-border: #1e1e1e;
     --contact-label: #333;
     --footer-color: #2a2a2a;
+    --nav-glass: rgba(10, 10, 10, 0.86);
   }
 
   @media (prefers-color-scheme: light) {
@@ -33,6 +34,7 @@
       --tag-border: #e0d4b8;
       --contact-label: #b39a70;
       --footer-color: #b39a70;
+      --nav-glass: rgba(245, 230, 200, 0.92);
     }
   }
 
@@ -47,6 +49,7 @@
     --tag-border: #1e1e1e;
     --contact-label: #333;
     --footer-color: #2a2a2a;
+    --nav-glass: rgba(10, 10, 10, 0.86);
   }
 
   :root[data-theme="light"] {
@@ -60,6 +63,7 @@
     --tag-border: #e0d4b8;
     --contact-label: #b39a70;
     --footer-color: #b39a70;
+    --nav-glass: rgba(245, 230, 200, 0.92);
   }
 
   html { scroll-behavior: smooth; }
@@ -101,7 +105,7 @@
     z-index: 40;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.72), transparent);
+    background: linear-gradient(to bottom, var(--nav-glass), transparent);
   }
 
   .nav-right {
@@ -285,6 +289,12 @@
   }
 
   .projects { display: flex; flex-direction: column; gap: 2px; }
+
+  .projects,
+  .stack-grid,
+  #contact {
+    position: relative;
+  }
 
   .project {
     border: 1px solid var(--border);
@@ -485,6 +495,59 @@
     pointer-events: none;
   }
 
+  .ambient-orbits {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .ambient-orbit {
+    position: absolute;
+    border-radius: 999px;
+    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.16), transparent 65%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.36);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    overflow: hidden;
+    opacity: 0.8;
+    mix-blend-mode: soft-light;
+  }
+
+  .ambient-orbit img,
+  .ambient-orbit svg {
+    width: 64%;
+    height: 64%;
+    object-fit: contain;
+    filter: grayscale(1) opacity(0.6);
+    transform: translate3d(18%, 18%, 0);
+  }
+
+  .ambient-orbit--python {
+    width: 210px;
+    height: 210px;
+    top: 9%;
+    left: -40px;
+    animation: floatOrbit 32s ease-in-out infinite alternate;
+  }
+
+  .ambient-orbit--django {
+    width: 180px;
+    height: 180px;
+    bottom: 12%;
+    right: -30px;
+    animation: backgroundFloat 36s ease-in-out infinite alternate;
+  }
+
+  .ambient-orbit--postgres {
+    width: 160px;
+    height: 160px;
+    top: 46%;
+    right: 12%;
+    animation: floatOrbit 40s ease-in-out infinite alternate;
+  }
+
   @keyframes up {
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
@@ -505,11 +568,40 @@
     .project-header { flex-direction: column; }
     .nav-right { gap: 12px; }
     .nav-links { gap: 12px; }
+
+    .ambient-orbit--python {
+      top: 5%;
+      left: -90px;
+      opacity: 0.5;
+    }
+
+    .ambient-orbit--django {
+      bottom: 4%;
+      right: -80px;
+      opacity: 0.45;
+    }
+
+    .ambient-orbit--postgres {
+      top: 56%;
+      right: -40px;
+      opacity: 0.45;
+    }
   }
 </style>
 </head>
 <body>
 <div class="scroll-progress"></div>
+<div class="ambient-orbits" aria-hidden="true">
+  <div class="ambient-orbit ambient-orbit--python">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="">
+  </div>
+  <div class="ambient-orbit ambient-orbit--django">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg" alt="">
+  </div>
+  <div class="ambient-orbit ambient-orbit--postgres">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="">
+  </div>
+</div>
 <div class="container">
 
   <nav>
