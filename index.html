@@ -23,17 +23,43 @@
 
   @media (prefers-color-scheme: light) {
     :root {
-      --bg: #f9f9f7;
-      --border: #e0e0d8;
-      --text: #111111;
-      --muted: #888;
-      --accent: #4a7c00;
-      --accent-dim: rgba(74, 124, 0, 0.06);
-      --tag-color: #666;
-      --tag-border: #ddd;
-      --contact-label: #bbb;
-      --footer-color: #ccc;
+      --bg: #f5e6c8;
+      --border: #e0d4b8;
+      --text: #2a2114;
+      --muted: #7a6a50;
+      --accent: #8b5e1a;
+      --accent-dim: rgba(139, 94, 26, 0.08);
+      --tag-color: #7a6a50;
+      --tag-border: #e0d4b8;
+      --contact-label: #b39a70;
+      --footer-color: #b39a70;
     }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0a0a0a;
+    --border: #1e1e1e;
+    --text: #e8e8e8;
+    --muted: #555;
+    --accent: #c8f060;
+    --accent-dim: rgba(200, 240, 96, 0.08);
+    --tag-color: #444;
+    --tag-border: #1e1e1e;
+    --contact-label: #333;
+    --footer-color: #2a2a2a;
+  }
+
+  :root[data-theme="light"] {
+    --bg: #f5e6c8;
+    --border: #e0d4b8;
+    --text: #2a2114;
+    --muted: #7a6a50;
+    --accent: #8b5e1a;
+    --accent-dim: rgba(139, 94, 26, 0.08);
+    --tag-color: #7a6a50;
+    --tag-border: #e0d4b8;
+    --contact-label: #b39a70;
+    --footer-color: #b39a70;
   }
 
   html { scroll-behavior: smooth; }
@@ -57,6 +83,12 @@
     animation: up 0.6s ease 0.1s forwards;
   }
 
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
   .nav-logo {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
@@ -76,6 +108,27 @@
     transition: color 0.2s;
   }
   .nav-links a:hover { color: var(--text); }
+
+  .theme-toggle {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
 
   .hero { padding: 100px 0 80px; }
 
@@ -338,7 +391,8 @@
   @media (max-width: 520px) {
     .hero-links { flex-direction: column; }
     .project-header { flex-direction: column; }
-    .nav-links { gap: 16px; }
+    .nav-right { gap: 12px; }
+    .nav-links { gap: 12px; }
   }
 </style>
 </head>
@@ -347,10 +401,16 @@
 
   <nav>
     <a class="nav-logo" href="#">EK</a>
-    <div class="nav-links">
-      <a href="#projects">Projects</a>
-      <a href="#stack">Stack</a>
-      <a href="#contact">Contact</a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#projects">Projects</a>
+        <a href="#stack">Stack</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <button class="theme-toggle" type="button" aria-label="Toggle light and dark mode">
+        <span class="theme-toggle-icon">&#9728;</span>
+        <span class="theme-toggle-text">Light</span>
+      </button>
     </div>
   </nav>
 
@@ -551,6 +611,49 @@
 </div>
 
 <script>
+  // Theme toggle: respects saved preference or system, then allows manual switch
+  (function() {
+    const root = document.documentElement;
+    const storedTheme = localStorage.getItem('theme');
+
+    function getPreferredTheme() {
+      if (storedTheme === 'light' || storedTheme === 'dark') return storedTheme;
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        return 'light';
+      }
+      return 'dark';
+    }
+
+    function applyTheme(theme) {
+      root.setAttribute('data-theme', theme);
+      const btn = document.querySelector('.theme-toggle');
+      if (!btn) return;
+      const icon = btn.querySelector('.theme-toggle-icon');
+      const text = btn.querySelector('.theme-toggle-text');
+      if (theme === 'light') {
+        if (icon) icon.textContent = '\u2600';
+        if (text) text.textContent = 'Light';
+      } else {
+        if (icon) icon.textContent = '\u263E';
+        if (text) text.textContent = 'Dark';
+      }
+    }
+
+    const initialTheme = getPreferredTheme();
+    applyTheme(initialTheme);
+
+    window.addEventListener('DOMContentLoaded', function() {
+      const toggle = document.querySelector('.theme-toggle');
+      if (!toggle) return;
+      toggle.addEventListener('click', function() {
+        const current = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+        const next = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', next);
+        applyTheme(next);
+      });
+    });
+  })();
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((e, i) => {
       if (e.isIntersecting) {
